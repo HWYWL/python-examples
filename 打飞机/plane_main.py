@@ -12,7 +12,7 @@ class PlaneGame(object):
         self.__create_sprites()
         print("游戏初始化")
 
-        # 设置定时器事件 - 创建敌机　1s
+        # 设置定时器事件 - 创建敌机　相隔1s
         pygame.time.set_timer(CREATE_ENEMY_EVENT, AIRCRAFT_CREATION_TIME)
         # 飞机发射子弹事件
         pygame.time.set_timer(HERO_FIRE_EVENT, RATE_OF_FIR)
