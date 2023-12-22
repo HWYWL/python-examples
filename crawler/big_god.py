@@ -3,9 +3,11 @@
 from DrissionPage import SessionPage
 import pymysql
 import re
+import requests
+import base64
 
 # 建立数据库连接
-conn = pymysql.connect(host='172.16.10.90', port=3306, database='crawler', user='root', password='123456')
+conn = pymysql.connect(host='127.0.0.1', port=50379, database='crawler', user='root', password='123456')
 
 # 创建游标对象
 cursor = conn.cursor()
@@ -33,6 +35,7 @@ def next_page(title, page_link):
         cursor.execute(sql, values)
         conn.commit()
         try:
+            posttom3u8(None, title, url)
             print(title, url, pic)
         except Exception as e:
             print("title error.")
@@ -40,9 +43,20 @@ def next_page(title, page_link):
         print("URL not found in the code.")
 
 
+# 推送到下载软件
+def posttom3u8(key, title, url):
+    data = '#KEY,{0}\r\n{1},{2}'.format(key, title, url) if key else '{0},{1}'.format(title, url)
+    try:
+        response = requests.post('http://127.0.0.1.1:5000/',
+                                 data={"data": base64.b64encode(data.encode('GBK')).decode()}).json()
+        print('推送成功') if response['message'] == 'success' else print('推送失败')
+    except:
+        print('推送失败')
+
+
 if __name__ == "__main__":
     # 下载文件路径
-    for i in range(1, 54):
+    for i in range(1, 2):
         # 访问某一页的网页
         page.get(f'https://xn---91dsvodcom-uu0ty71c3m3evyue1b8a.91dsvod-com.com/index-0-{i}.html')
         # 获取所有开源库<a>元素列表
